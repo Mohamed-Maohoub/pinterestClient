@@ -3,7 +3,7 @@ import uniqid from 'uniqid';
 
 const ImageCard = ({ login, avatar_url }) => {
   const onload = () => {
-    console.log('image loaded');
+    
   };
 
   return (

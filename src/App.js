@@ -18,26 +18,24 @@ export default class App extends React.Component {
 
   /*************************** utillity funcs ***********************************************/
 
-/* ================================ customizeRequest_util func =============================*/
-/* 
+  /* ================================ customizeRequest_util func =============================*/
+  /* 
   input arguments 
 
 
 
 */
-  customizeRequest_util=(subURL,skip=this.state.skip)=>{
-    return loadData
-    .get(subURL, {
+  customizeRequest_util = (subURL, skip = this.state.skip) => {
+    return loadData.get(subURL, {
       params: {
         term: this.state.searchTerm,
         skip,
         limit: this.state.limit
       }
-    })
-  }
+    });
+  };
 
-
-  resetStateAndSetError_util=(errMessage)=>{
+  resetStateAndSetError_util = errMessage => {
     this.setState({
       hasMore: false,
       images: [],
@@ -49,15 +47,30 @@ export default class App extends React.Component {
         message: errMessage
       }
     });
-  }
+  };
 
-/*************************** life Cycle hook  funcs ***********************************************/
+  resetDefaultStateAndKeepSearchTerm_util = () => {
+    console.log('resetDefaultStateAndKeepSearchTerm_util');
+    this.setState({
+      hasMore: false,
+      images: [],
+      skip: 0,
+      limit: 12,
+      serverError: {
+        exist: false,
+        message: ''
+      }
+    });
+    console.log(this.state);
+  };
 
-/* ============================== componentDidMount func ===========================================*/
+  /*************************** life Cycle hook  funcs ***********************************************/
+
+  /* ============================== componentDidMount func ===========================================*/
 
   componentDidMount() {
-    
-    this.customizeRequest_util('/home').then(response => {
+    this.customizeRequest_util('/home')
+      .then(response => {
         if (!response.error) {
           this.setState({
             hasMore: response.data.hasMore,
@@ -66,15 +79,17 @@ export default class App extends React.Component {
         }
       })
       .catch(error => {
-        this.resetStateAndSetError_util("Unable to connect To server")
+        this.resetStateAndSetError_util('Unable to connect To server');
       });
   }
 
-  /* ==================== onSubmit func =============================*/ 
-  onSubmit = async e => {
+  /*************************** callback  funcs ***********************************************/
+  /* ==================== onSubmit func =============================*/
 
+  onSubmit = async e => {
     e.preventDefault();
     try {
+      await this.resetDefaultStateAndKeepSearchTerm_util();
       const response = await this.customizeRequest_util('/home');
       if (!response.data.error) {
         this.setState({
@@ -86,23 +101,29 @@ export default class App extends React.Component {
           }
         });
       } else {
-        this.resetStateAndSetError_util(response.data.error)
-        
+        this.resetStateAndSetError_util(response.data.error);
       }
     } catch (error) {
-      this.resetStateAndSetError_util("Unable to connect To server")
+      this.resetStateAndSetError_util('Unable to connect To server');
     }
   };
+
+  /* ==================== onSubmit func =============================*/
 
   onChange = e => {
     this.setState({ searchTerm: e.target.value });
   };
 
+  /* ==================== onSubmit func =============================*/
+
   loadMore = async () => {
-    const baseURLValue= this.state.searchTerm?'/home':'/home'
+    const baseURLValue = this.state.searchTerm ? '/home' : '/home';
     try {
-      const response = await this.customizeRequest_util(baseURLValue,  this.state.skip + this.state.limit);
-      
+      const response = await this.customizeRequest_util(
+        baseURLValue,
+        this.state.skip + this.state.limit
+      );
+
       if (!response.data.hasOwnProperty('error')) {
         this.setState({
           skip: this.state.skip + this.state.limit,
@@ -110,7 +131,11 @@ export default class App extends React.Component {
           images: this.state.images.concat(response.data.data)
         });
       } else {
-        if (this.state.hasMore) {  //handling the case when data was sent matching the limit but there is no incomming data so hasMore Will not Sent and it has to be set to prevent more requests 
+        /*
+          handling the case when data was sent matching the limit but there is no
+           incomming data so hasMore Will not Sent and it has to be set to prevent more requests
+            */
+        if (this.state.hasMore) {
           this.setState({
             hasMore: false
           });
@@ -120,6 +145,7 @@ export default class App extends React.Component {
       console.log('request failed');
     }
   };
+
   render() {
     return (
       <div className="App">

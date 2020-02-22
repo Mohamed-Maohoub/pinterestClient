@@ -12,7 +12,7 @@ const ImageList = ({ images, loadMore, hasMore }) => {
     700: 3,
     500: 2
   };
-  console.log(images);
+
   const childElements = images.map(({ login, avatar_url }) => {
     return (
       <div key={uniqid()}>
