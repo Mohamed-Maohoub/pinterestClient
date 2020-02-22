@@ -3,14 +3,8 @@ import SearchBar from './SearchBar';
 
 const Navbar = ({ onSubmit, onChange, searchTerm }) => {
   return (
-    <div className="ui segment " style={{backgroundColor:'gray'}}>
+    <div className="ui segment " style={{ backgroundColor: 'DimGray' }}>
       <div className="pinterentIcon">
-        <img
-          className="ui avatar image"
-          src=""
-          alt="logo"
-        />
-
         <SearchBar
           onSubmit={onSubmit}
           onChange={onChange}

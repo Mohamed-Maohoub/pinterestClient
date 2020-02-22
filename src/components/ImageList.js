@@ -29,13 +29,7 @@ const ImageList = ({ images, loadMore, hasMore }) => {
             </div>
           }
         >
-          <ImageCard
-            login={login}
-            avatar_url={avatar_url}
-            onLoad={e => {
-              console.log(e.target);
-            }}
-          ></ImageCard>
+          <ImageCard login={login} avatar_url={avatar_url}></ImageCard>
         </Suspense>
       </div>
     );

@@ -1,15 +1,12 @@
 import React from 'react';
 import uniqid from 'uniqid';
 
-const ImageCard = ({ login, avatar_url,onLoad }) => {
- 
-
+const ImageCard = ({ login, avatar_url, onLoad }) => {
   return (
     <img
       alt={login}
       src={avatar_url}
       key={uniqid()}
-      onLoad={onLoad}
       style={{
         width: '100%',
         height: 'fit-content',
