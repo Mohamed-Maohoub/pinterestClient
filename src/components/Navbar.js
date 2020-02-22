@@ -3,7 +3,7 @@ import SearchBar from './SearchBar';
 
 const Navbar = ({ onSubmit, onChange, searchTerm }) => {
   return (
-    <div className="ui segment ">
+    <div className="ui segment " style={{backgroundColor:'gray'}}>
       <div className="pinterentIcon">
         <img
           className="ui avatar image"
