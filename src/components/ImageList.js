@@ -18,12 +18,24 @@ const ImageList = ({ images, loadMore, hasMore }) => {
       <div key={uniqid()}>
         <Suspense
           fallback={
-            <div className="ui placeholder">
-              <div className="image"></div>
+            <div
+              style={{
+                height: '300px',
+                backgroundColor: 'Gainsboro',
+                borderRadius: '30px'
+              }}
+            >
+              <div></div>
             </div>
           }
         >
-          <ImageCard login={login} avatar_url={avatar_url}></ImageCard>
+          <ImageCard
+            login={login}
+            avatar_url={avatar_url}
+            onLoad={e => {
+              console.log(e.target);
+            }}
+          ></ImageCard>
         </Suspense>
       </div>
     );

@@ -16,16 +16,22 @@ export default class App extends React.Component {
     }
   };
 
-  /*************************** utillity funcs ***********************************************/
+  /*******************************  utillity  funcs          ***********************************************
+   *********************************************************************************************************/
 
-  /* ================================ customizeRequest_util func =============================*/
-  /* 
-  input arguments 
+  /*========================================================================================================
+=======================             customizeRequest_util func               ============================*/
+  /**
+   * \brief          Take subURL and make requeest uo server  and take optinal skip value to customize reuest .
+   * \param[in]      subURL =>  string &  madatory , skip =>  Number &  optional
+   * \param[out]     none
+   * \return         Promise
+   */
 
-
-
-*/
   customizeRequest_util = (subURL, skip = this.state.skip) => {
+    // 1- Validating function input
+
+    // 2- return function output
     return loadData.get(subURL, {
       params: {
         term: this.state.searchTerm,
@@ -35,7 +41,17 @@ export default class App extends React.Component {
     });
   };
 
+  /*=========================================================================================================
+  ====================      resetStateAndSetError_util func       =============================*/
+  /**
+   * \brief          used to reset the app state to its inital value and  set the error message with the input value
+   * \param[in]      errMessage =>  string &  madatory
+   * \return         none
+   */
   resetStateAndSetError_util = errMessage => {
+    // 1- Validating function input
+
+    // 2-  function logic
     this.setState({
       hasMore: false,
       images: [],
@@ -49,8 +65,14 @@ export default class App extends React.Component {
     });
   };
 
+  /*=========================================================================================================
+  ====================      resetDefaultStateAndKeepSearchTerm_util func       =============================*/
+  /**
+   * \brief          used to reset the app state to its inital value and  keeping the search term
+   * \param[in]      none
+   * \return         none
+   */
   resetDefaultStateAndKeepSearchTerm_util = () => {
-    console.log('resetDefaultStateAndKeepSearchTerm_util');
     this.setState({
       hasMore: false,
       images: [],
@@ -61,13 +83,18 @@ export default class App extends React.Component {
         message: ''
       }
     });
-    console.log(this.state);
   };
 
-  /*************************** life Cycle hook  funcs ***********************************************/
+  /*******************************  Lifecycle hooks           ***********************************************
+   *********************************************************************************************************/
 
-  /* ============================== componentDidMount func ===========================================*/
-
+  /*========================================================================================================
+=======================                componentDidMount func               ===============================*/
+  /**
+   * \brief          handle request for the first time to get initial data and update the state with the obtained data
+   * \param[in]      none
+   * \return         none
+   */
   componentDidMount() {
     this.customizeRequest_util('/home')
       .then(response => {
@@ -83,9 +110,18 @@ export default class App extends React.Component {
       });
   }
 
-  /*************************** callback  funcs ***********************************************/
-  /* ==================== onSubmit func =============================*/
+  /*******************************  callback   funcs          ***********************************************
+   *********************************************************************************************************/
 
+  /*=========================================================================================================
+=================================             onSubmit func               =================================*/
+  /**
+   * \brief          loadMore is callback function called When Submitting form
+   *                 TO  handle request (update the searchTerm , update skip and limit , remove serverError)
+   *                 update the state with the obtained data
+   * \param[in]      eventObject
+   * \return         none
+   */
   onSubmit = async e => {
     e.preventDefault();
     try {
@@ -108,14 +144,27 @@ export default class App extends React.Component {
     }
   };
 
-  /* ==================== onSubmit func =============================*/
+  /*========================================================================================================
+    ================================             onChange func               ==============================*/
+  /**
+   * \brief          onChange id callback function  used BY input to update the searchTerm state
+   * \param[in]      eventObject
+   * \return         none
+   */
 
   onChange = e => {
     this.setState({ searchTerm: e.target.value });
   };
 
-  /* ==================== onSubmit func =============================*/
-
+  /*========================================================================================================
+    =======================             loadMore func               =======================================*/
+  /**
+   * \brief          loadMore is callback function  used BY for Infitescroll feature
+   *                 TO  handle request (Keeping the searchTerm , update skip and limit )
+   *                 update the state with the obtained data
+   * \param[in]      none
+   * \return         none
+   */
   loadMore = async () => {
     const baseURLValue = this.state.searchTerm ? '/home' : '/home';
     try {
@@ -146,6 +195,16 @@ export default class App extends React.Component {
     }
   };
 
+  /*******************************     render  funcs        ************************************************
+   *********************************************************************************************************/
+
+  /*========================================================================================================
+  ===================================             render func               ===============================*/
+  /**
+   * \brief          render all app component and propgate the state and callback to children as propbs
+   * \param[in]      none
+   * \return         none
+   */
   render() {
     return (
       <div className="App">
@@ -162,83 +221,3 @@ export default class App extends React.Component {
     );
   }
 }
-
-// import React, { useState } from 'react';
-
-// import './App.css';
-// import Main from './components/Main';
-
-// import loadData from './api/loadData';
-// function App() {
-//   let [appState, setAppState] = useState({
-//     hasMore: false,
-//     images: [],
-//     searchTerm: '',
-//     skip: 0,
-//     limit: 12
-//   });
-
-//   const onSubmit = async e => {
-//     e.preventDefault();
-
-//     try {
-//       const response = await loadData.get('/home', {
-//         params: {
-//           term: appState.searchTerm,
-//           skip: appState.skip,
-//           limit: appState.limit
-//         }
-//       });
-//       if (!response.error) {
-//         setAppState({
-//           ...appState,
-//           hasMore: response.data.hasMore,
-//           images: response.data.data
-//         });
-//       }
-//     } catch (error) {
-//       console.log('request failed');
-//     }
-//   };
-
-//   const onChange = e => {
-//     setAppState({ ...appState, searchTerm: e.target.value });
-//   };
-//   const loadMore = async () => {
-//     try {
-//       const response = await loadData.get('/home', {
-//         params: {
-//           term: appState.searchTerm,
-//           skip: appState.skip + appState.limit,
-//           limit: appState.limit
-//         }
-//       });
-//       console.log(response);
-//       if (!response.error) {
-//         setAppState({
-//           searchTerm: appState.searchTerm,
-//           skip: appState.skip + appState.limit,
-//           limit: appState.limit,
-//           hasMore: response.data.hasMore,
-//           images: appState.images.concat(response.data.data)
-//         });
-//       }
-//     } catch (error) {
-//       console.log('request failed');
-//     }
-//   };
-//   return (
-//     <div className="App">
-//       <Main
-//         onSubmit={onSubmit}
-//         onChange={onChange}
-//         loadMore={loadMore}
-//         searchTerm={appState.searchTerm}
-//         images={appState.images}
-//         hasMore={appState.hasMore}
-//       ></Main>
-//     </div>
-//   );
-// }
-
-// export default App;
