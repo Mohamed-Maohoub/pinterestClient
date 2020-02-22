@@ -1,10 +1,9 @@
-import React from 'react';
-
-
-
+import React, { Suspense, lazy } from 'react';
 import Masonry from 'react-masonry-css';
 import uniqid from 'uniqid';
 import InfiniteScroll from 'react-infinite-scroller';
+
+const ImageCard = lazy(() => import('./ImageCard'));
 
 const ImageList = ({ images, loadMore, hasMore }) => {
   const breakpointColumnsObj = {
@@ -13,17 +12,19 @@ const ImageList = ({ images, loadMore, hasMore }) => {
     700: 3,
     500: 2
   };
-console.log(images)
+  console.log(images);
   const childElements = images.map(({ login, avatar_url }) => {
     return (
       <div key={uniqid()}>
-        <img
-          id="imageCard"
-          alt={login}
-          src={avatar_url}
-          key={uniqid()}
-          style={{ width: '100%', height: 'fit-content' , borderRadius: '25px'}}
-        />
+        <Suspense
+          fallback={
+            <div className="ui placeholder">
+              <div className="image"></div>
+            </div>
+          }
+        >
+          <ImageCard login={login} avatar_url={avatar_url}></ImageCard>
+        </Suspense>
       </div>
     );
   });

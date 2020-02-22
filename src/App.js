@@ -1,8 +1,6 @@
 import React from 'react';
-
 import './App.css';
 import Main from './components/Main';
-
 import loadData from './api/loadData';
 
 export default class App extends React.Component {
@@ -11,23 +9,56 @@ export default class App extends React.Component {
     images: [],
     searchTerm: '',
     skip: 0,
-    limit: 12
+    limit: 12,
+    serverError: {
+      exist: false,
+      message: ''
+    }
   };
 
+  /*************************** utillity funcs ***********************************************/
+
+/* ================================ customizeRequest_util func =============================*/
+/* 
+  input arguments 
+
+
+
+*/
+  customizeRequest_util=(subURL,skip=this.state.skip)=>{
+    return loadData
+    .get(subURL, {
+      params: {
+        term: this.state.searchTerm,
+        skip,
+        limit: this.state.limit
+      }
+    })
+  }
+
+
+  resetStateAndSetError_util=(errMessage)=>{
+    this.setState({
+      hasMore: false,
+      images: [],
+      searchTerm: '',
+      skip: 0,
+      limit: 12,
+      serverError: {
+        exist: true,
+        message: errMessage
+      }
+    });
+  }
+
+/*************************** life Cycle hook  funcs ***********************************************/
+
+/* ============================== componentDidMount func ===========================================*/
+
   componentDidMount() {
-    console.log('componentDidMount func');
-    loadData
-      .get('/home', {
-        params: {
-          term: this.state.searchTerm,
-          skip: this.state.skip,
-          limit: this.state.limit
-        }
-      })
-      .then(response => {
+    
+    this.customizeRequest_util('/home').then(response => {
         if (!response.error) {
-          console.log('res.data', response.data.data);
-          console.log('resHas', response.data.hasMore);
           this.setState({
             hasMore: response.data.hasMore,
             images: this.state.images.concat(response.data.data)
@@ -35,29 +66,31 @@ export default class App extends React.Component {
         }
       })
       .catch(error => {
-        console.log('request failed');
+        this.resetStateAndSetError_util("Unable to connect To server")
       });
   }
 
+  /* ==================== onSubmit func =============================*/ 
   onSubmit = async e => {
-    e.preventDefault();
 
+    e.preventDefault();
     try {
-      const response = await loadData.get('/home', {
-        params: {
-          term: this.state.searchTerm,
-          skip: this.state.skip,
-          limit: this.state.limit
-        }
-      });
-      if (!response.error) {
+      const response = await this.customizeRequest_util('/home');
+      if (!response.data.error) {
         this.setState({
           hasMore: response.data.hasMore,
-          images: response.data.data
+          images: response.data.data,
+          serverError: {
+            exist: false,
+            message: ''
+          }
         });
+      } else {
+        this.resetStateAndSetError_util(response.data.error)
+        
       }
     } catch (error) {
-      console.log('request failed');
+      this.resetStateAndSetError_util("Unable to connect To server")
     }
   };
 
@@ -66,17 +99,10 @@ export default class App extends React.Component {
   };
 
   loadMore = async () => {
-    console.log('loadmore func');
+    const baseURLValue= this.state.searchTerm?'/home':'/home'
     try {
-      const response = await loadData.get('/home', {
-        params: {
-          term: this.state.searchTerm,
-          skip: this.state.skip + this.state.limit,
-          limit: this.state.limit
-        }
-      });
-      console.log(response.data.data);
-      console.log(response.data.hasMore);
+      const response = await this.customizeRequest_util(baseURLValue,  this.state.skip + this.state.limit);
+      
       if (!response.data.hasOwnProperty('error')) {
         this.setState({
           skip: this.state.skip + this.state.limit,
@@ -84,7 +110,7 @@ export default class App extends React.Component {
           images: this.state.images.concat(response.data.data)
         });
       } else {
-        if (this.state.hasMore) {
+        if (this.state.hasMore) {  //handling the case when data was sent matching the limit but there is no incomming data so hasMore Will not Sent and it has to be set to prevent more requests 
           this.setState({
             hasMore: false
           });
@@ -104,6 +130,7 @@ export default class App extends React.Component {
           searchTerm={this.state.searchTerm}
           images={this.state.images}
           hasMore={this.state.hasMore}
+          serverError={this.state.serverError}
         ></Main>
       </div>
     );

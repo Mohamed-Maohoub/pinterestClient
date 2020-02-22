@@ -1,17 +1,24 @@
 import React from 'react';
 import uniqid from 'uniqid';
-const ImageCard = ({ login, id, avatar_url }) => {
+
+const ImageCard = ({ login, avatar_url }) => {
+  const onload = () => {
+    console.log('image loaded');
+  };
+
   return (
-    <div key={uniqid()}>
-      <img className="imageCard" alt={login} src={avatar_url} key={uniqid()} />
-    </div>
+    <img
+      alt={login}
+      src={avatar_url}
+      key={uniqid()}
+      onLoad={onload}
+      style={{
+        width: '100%',
+        height: 'fit-content',
+        borderRadius: '30px'
+      }}
+    />
   );
 };
 
 export default ImageCard;
-
-
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-
-

@@ -1,3 +1,10 @@
+.errorDiv{
+  text-align: center;
+  
+}
+.errorDiv h1{
+  color: red;
+}
 label {
   display: inline;
 }
@@ -9,7 +16,7 @@ form,
 }
 
 #search {
-  width: 40%;
+  width: 80%;
 }
 
 .pinterentIcon {
@@ -25,15 +32,15 @@ form,
   margin: 0px;
 }
 
-#imageCard {
+.imageCard {
   width: '100%';
   height: 'fit-content';
-  border-radius: 8px;
+  border-radius: 30px;
 }
 
-#container{
-  margin-left: 2%;
-  margin-right: 2%;
+#container {
+  margin-left: 3%;
+  margin-right: 3%;
 }
 
 .my-masonry-grid {
@@ -51,7 +58,7 @@ form,
 /* Style your items */
 .my-masonry-grid_column > div {
   /* change div to reference your elements you put in <Masonry> */
-  background: grey;
+  background: white;
   margin-bottom: 30px;
 }
 

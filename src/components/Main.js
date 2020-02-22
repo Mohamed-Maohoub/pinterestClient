@@ -8,8 +8,14 @@ const Main = ({
   hasMore,
   onSubmit,
   onChange,
-  searchTerm
+  searchTerm,
+  serverError
 }) => {
+  let renderedElement=''
+  if( serverError.exist){
+     renderedElement =<div className="errorDiv"><h1>{serverError.message}</h1></div>
+  }
+    
   return (
     <div>
       <Navbar
@@ -17,12 +23,8 @@ const Main = ({
         onChange={onChange}
         searchTerm={searchTerm}
       ></Navbar>
-
-      <Homepage
-        images={images}
-        loadMore={loadMore}
-        hasMore={hasMore}
-      ></Homepage>
+<Homepage images={images} loadMore={loadMore} hasMore={hasMore}></Homepage>
+      {renderedElement}
     </div>
   );
 };
