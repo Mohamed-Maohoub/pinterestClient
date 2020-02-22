@@ -57,7 +57,7 @@ export default class App extends React.Component {
       images: [],
       searchTerm: '',
       skip: 0,
-      limit: 12,
+      limit: 9,
       serverError: {
         exist: true,
         message: errMessage
@@ -101,7 +101,8 @@ export default class App extends React.Component {
         if (!response.error) {
           this.setState({
             hasMore: response.data.hasMore,
-            images: this.state.images.concat(response.data.data)
+            images: this.state.images.concat(response.data.data),
+            skip: response.data.data.length
           });
         }
       })
@@ -131,6 +132,7 @@ export default class App extends React.Component {
         this.setState({
           hasMore: response.data.hasMore,
           images: response.data.data,
+          skip: response.data.hasMore.length,
           serverError: {
             exist: false,
             message: ''
@@ -166,16 +168,16 @@ export default class App extends React.Component {
    * \return         none
    */
   loadMore = async () => {
-    const baseURLValue = this.state.searchTerm ? '/home' : '/home';
+    
     try {
       const response = await this.customizeRequest_util(
-        baseURLValue,
+        '/home',
         this.state.skip + this.state.limit
       );
 
       if (!response.data.hasOwnProperty('error')) {
         this.setState({
-          skip: this.state.skip + this.state.limit,
+          skip: this.state.skip + response.data.hasMore.length,
           hasMore: response.data.hasMore,
           images: this.state.images.concat(response.data.data)
         });
