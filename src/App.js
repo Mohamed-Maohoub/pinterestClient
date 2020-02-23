@@ -5,11 +5,11 @@ import loadData from './api/loadData';
 
 export default class App extends React.Component {
   state = {
-    hasMore: false,
+    hasMore: false, // control infinte scroll feature and prevent more requests
     images: [],
     searchTerm: '',
     skip: 0,
-    limit: 12,
+    limit: 9,
     serverError: {
       exist: false,
       message: ''
@@ -19,33 +19,11 @@ export default class App extends React.Component {
   /*******************************  utillity  funcs          ***********************************************
    *********************************************************************************************************/
 
-  /*========================================================================================================
-=======================             customizeRequest_util func               ============================*/
-  /**
-   * \brief          Take subURL and make requeest uo server  and take optinal skip value to customize reuest .
-   * \param[in]      subURL =>  string &  madatory , skip =>  Number &  optional
-   * \param[out]     none
-   * \return         Promise
-   */
-
-  customizeRequest_util = (subURL, skip = this.state.skip) => {
-    // 1- Validating function input
-
-    // 2- return function output
-    return loadData.get(subURL, {
-      params: {
-        term: this.state.searchTerm,
-        skip,
-        limit: this.state.limit
-      }
-    });
-  };
-
   /*=========================================================================================================
   ====================      resetStateAndSetError_util func       =============================*/
   /**
    * \brief          used to reset the app state to its inital value and  set the error message with the input value
-   * \param[in]      errMessage =>  string &  madatory
+   * \param[in]      errMessage =>  string &  mandatory
    * \return         none
    */
   resetStateAndSetError_util = errMessage => {
@@ -77,10 +55,31 @@ export default class App extends React.Component {
       hasMore: false,
       images: [],
       skip: 0,
-      limit: 12,
+      limit: 9,
       serverError: {
         exist: false,
         message: ''
+      }
+    });
+  };
+
+  /*========================================================================================================
+  =======================             customizeRequest_util func               ============================*/
+  /**
+   * \brief          customize and send request to the server with  optional skip value.
+   * \param[in]      subURL =>  string &  mandatory , skip =>  Number &  optional
+   * \return         Promise
+   */
+
+  customizeRequest_util = (subURL, skip = this.state.skip) => {
+    // 1- Validating function input
+
+    // 2- return function output
+    return loadData.get(subURL, {
+      params: {
+        term: this.state.searchTerm,
+        skip,
+        limit: this.state.limit
       }
     });
   };
@@ -98,11 +97,11 @@ export default class App extends React.Component {
   componentDidMount() {
     this.customizeRequest_util('/home')
       .then(response => {
-        if (!response.error) {
+        if (!response.data.error) {
           this.setState({
             hasMore: response.data.hasMore,
             images: this.state.images.concat(response.data.data),
-            skip: response.data.data.length
+            skip: parseInt(response.data.data.length)
           });
         }
       })
@@ -117,7 +116,7 @@ export default class App extends React.Component {
   /*=========================================================================================================
 =================================             onSubmit func               =================================*/
   /**
-   * \brief          loadMore is callback function called When Submitting form
+   * \brief          onSubmit is callback function called When Submitting form
    *                 TO  handle request (update the searchTerm , update skip and limit , remove serverError)
    *                 update the state with the obtained data
    * \param[in]      eventObject
@@ -128,11 +127,12 @@ export default class App extends React.Component {
     try {
       await this.resetDefaultStateAndKeepSearchTerm_util();
       const response = await this.customizeRequest_util('/home');
+
       if (!response.data.error) {
         this.setState({
           hasMore: response.data.hasMore,
           images: response.data.data,
-          skip: response.data.hasMore.length,
+          skip: parseInt(response.data.hasMore.length),
           serverError: {
             exist: false,
             message: ''
@@ -149,7 +149,7 @@ export default class App extends React.Component {
   /*========================================================================================================
     ================================             onChange func               ==============================*/
   /**
-   * \brief          onChange id callback function  used BY input to update the searchTerm state
+   * \brief          onChange is callback function  used BY input to update the searchTerm state
    * \param[in]      eventObject
    * \return         none
    */
@@ -161,23 +161,22 @@ export default class App extends React.Component {
   /*========================================================================================================
     =======================             loadMore func               =======================================*/
   /**
-   * \brief          loadMore is callback function  used BY for Infitescroll feature
+   * \brief          loadMore is callback function  used BY for infinte scroll feature
    *                 TO  handle request (Keeping the searchTerm , update skip and limit )
    *                 update the state with the obtained data
    * \param[in]      none
    * \return         none
    */
   loadMore = async () => {
-    
     try {
       const response = await this.customizeRequest_util(
         '/home',
         this.state.skip + this.state.limit
       );
 
-      if (!response.data.hasOwnProperty('error')) {
+      if (!response.data.error) {
         this.setState({
-          skip: this.state.skip + response.data.hasMore.length,
+          skip: parseInt(this.state.skip) + parseInt(response.data.data.length),
           hasMore: response.data.hasMore,
           images: this.state.images.concat(response.data.data)
         });
@@ -203,7 +202,7 @@ export default class App extends React.Component {
   /*========================================================================================================
   ===================================             render func               ===============================*/
   /**
-   * \brief          render all app component and propgate the state and callback to children as propbs
+   * \brief          render all app components and propgate the state and callbacks to children
    * \param[in]      none
    * \return         none
    */

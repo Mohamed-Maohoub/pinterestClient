@@ -1,21 +1,23 @@
 import React, { Suspense, lazy } from 'react';
 import Masonry from 'react-masonry-css';
-import uniqid from 'uniqid';
 import InfiniteScroll from 'react-infinite-scroller';
 
 const ImageCard = lazy(() => import('./ImageCard'));
 
 const ImageList = ({ images, loadMore, hasMore }) => {
-  const breakpointColumnsObj = {
+
+  // To change number of  columns  with screen width  
+  const breakpointColumnsObj = {  
     default: 6,
     1200: 5,
     700: 3,
     500: 2
   };
 
-  const childElements = images.map(({ login, avatar_url }) => {
+  const childElements = images.map(({ login, avatar_url,_id }) => {
+    
     return (
-      <div key={uniqid()}>
+      <div key={_id}>
         <Suspense
           fallback={
             <div
@@ -41,7 +43,7 @@ const ImageList = ({ images, loadMore, hasMore }) => {
         loadMore={loadMore}
         hasMore={hasMore}
         loader={
-          <div key={uniqid()} className="loader">
+          <div key='1' className="loader">
             {' '}
             Loading...{' '}
           </div>
